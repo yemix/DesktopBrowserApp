@@ -121,19 +121,20 @@ struct BrowserView: View {
     }
 }
 
-class WebViewStore: ObservableObject {
+class WebViewStore: NSObject, ObservableObject {
     let webView: WKWebView
     @Published var canGoBack = false
     @Published var canGoForward = false
     @Published var isLoading = false
     
-    init() {
+    override init() {
         let config = WKWebViewConfiguration()
         // Desktop User-Agent
         config.applicationNameForUserAgent = "Chrome/136.0.0.0 Safari/537.36"
         self.webView = WKWebView(frame: .zero, configuration: config)
         self.webView.customUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
         
+        super.init()
         webView.navigationDelegate = self
     }
     
