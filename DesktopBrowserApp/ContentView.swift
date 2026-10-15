@@ -1,22 +1,22 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var selectedTab = 0
+    @State private var showSettings = false
     
     var body: some View {
-        TabView(selection: $selectedTab) {
-            BrowserView()
-                .tabItem {
-                    Label("Browser", systemImage: "globe")
+        BrowserView(showSettings: $showSettings)
+            .sheet(isPresented: $showSettings) {
+                NavigationView {
+                    SettingsView()
+                        .navigationTitle("Einstellungen")
+                        .navigationBarTitleDisplayMode(.inline)
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("Fertig") { showSettings = false }
+                            }
+                        }
                 }
-                .tag(0)
-            
-            SettingsView()
-                .tabItem {
-                    Label("Einstellungen", systemImage: "gear")
-                }
-                .tag(1)
-        }
+            }
     }
 }
 
