@@ -1,0 +1,45 @@
+name: Build IPA
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build iOS IPA
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Archive (unsigned)
+        run: |
+          xcodebuild archive \
+            -project DesktopBrowserApp.xcodeproj \
+            -scheme DesktopBrowserApp \
+            -sdk iphoneos \
+            -configuration Release \
+            -archivePath $RUNNER_TEMP/DesktopBrowserApp.xcarchive \
+            -destination 'generic/platform=iOS' \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY=""
+
+      - name: Package as IPA
+        run: |
+          mkdir -p $RUNNER_TEMP/ipa/Payload
+          cp -R $RUNNER_TEMP/DesktopBrowserApp.xcarchive/Products/Applications/DesktopBrowserApp.app $RUNNER_TEMP/ipa/Payload/
+          cd $RUNNER_TEMP/ipa
+          zip -r DesktopBrowserApp.ipa Payload
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DesktopBrowserApp-ipa
+          path: ${{ runner.temp }}/ipa/DesktopBrowserApp.ipa
+          retention-days: 7

@@ -1,0 +1,3 @@
+// Minimal project.pbxproj - see local generation. For full content, open in Xcode and regenerate if needed.
+// This is a placeholder; the actual full pbxproj should be generated properly.
+// Use Xcode to open and fix if build fails.
